@@ -1,4 +1,6 @@
-export default function TodoItem({ todo, onComplete, onDelete, onRedo }) {
+import { memo } from 'react';
+
+function TodoItem({ todo, onComplete, onDelete, onRedo }) {
   const { completed, title } = todo;
 
   const handleCompleteClick = () => {
@@ -10,8 +12,8 @@ export default function TodoItem({ todo, onComplete, onDelete, onRedo }) {
   };
 
   const handleRedoClick = () => {
-    onRedo(todo.id)
-  }
+    onRedo(todo.id);
+  };
 
   return !completed ? (
     <>
@@ -55,3 +57,7 @@ export default function TodoItem({ todo, onComplete, onDelete, onRedo }) {
     </>
   );
 }
+
+const TodoItemMemo = memo(TodoItem);
+
+export default TodoItemMemo;

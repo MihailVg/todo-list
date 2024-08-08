@@ -1,7 +1,7 @@
 import Header from '../../components/Header/Header';
 import TodoItem from '../../components/Todo-item/TodoItem';
 import { useFetchTodoList } from '../../hooks/useFetchTodoList/useFetchTodoList';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Form from '../../components/Form/Form';
 
 export default function MainPage() {
@@ -19,39 +19,39 @@ export default function MainPage() {
     setTodoList(filteredTodoList);
   }, [data]);
 
-  if (!todoList) {
-    return null;
-  }
+  const onComplete = useCallback((id) => {
+    const updatedTodoList = todoList.map(todo =>
+      todo.id === id ? { ...todo, completed: true } : todo
+    );
+    setTodoList(updatedTodoList);
+  }, [todoList])
 
-  const onAdd = (title) => {
+  const onDelete = useCallback((id) => {
+    const updatedTodoList = todoList.filter(todo => todo.id !== id);
+    setTodoList(updatedTodoList);
+  }, [todoList])
+
+  const onRedo = useCallback((id) => {
+    const updatedTodoList = todoList.map(todo =>
+      todo.id === id ? { ...todo, completed: false } : todo
+    );
+    setTodoList(updatedTodoList);
+  }, [todoList])
+
+  const onAdd = useCallback((title) => {
     const newTodo = {
       userId: 1,
       id: count,
       title: title,
       completed: false,
     }
-    setCount(count + 1)
-    setTodoList([...todoList, newTodo])
+    setCount((prev) => prev + 1)
+    setTodoList([newTodo, ...todoList])
+  }, [todoList, count])
+
+  if (!todoList) {
+    return null;
   }
-
-  const onComplete = id => {
-    const updatedTodoList = todoList.map(todo =>
-      todo.id === id ? { ...todo, completed: true } : todo
-    );
-    setTodoList(updatedTodoList);
-  };
-
-  const onRedo = id => {
-    const updatedTodoList = todoList.map(todo =>
-      todo.id === id ? { ...todo, completed: false } : todo
-    );
-    setTodoList(updatedTodoList);
-  };
-
-  const onDelete = id => {
-    const updatedTodoList = todoList.filter(todo => todo.id !== id);
-    setTodoList(updatedTodoList);
-  };
 
   return (
     <div className='container'>
